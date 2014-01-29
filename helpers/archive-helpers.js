@@ -7,6 +7,8 @@ var path = require('path');
   code in one place! Feel free to customize it in any way you wish.
 */
 
+// shared between web and workers application
+
 exports.paths = {
   'siteAssets' : path.join(__dirname, '../web/public'),
   'archivedSites' : path.join(__dirname, '../archives/sites'),
