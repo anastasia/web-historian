@@ -11,34 +11,59 @@ exports.headers = headers = {
   "access-control-max-age": 10, // Seconds.
   'Content-Type': "text/html"
 };
+var contentTypes = {
+  '.js' : 'text/javascript',
+  '.css' : 'text/css'
+};
 
-var serveAssets = exports.serveAssets = function(response, earl) { // earl = request.url
-  // Write some code here that helps serve up your static files!
-  // (Static files are things like html (yours or archived from others...), css, or anything that doesn't change often.)
-  var readStream = fs.createReadStream(earl); 
+exports.serveAssets = serveAssets = function(response, earl) { // earl = request.url
+  if(earl === "/"){ earl = "index.html" };
+  earl = path.join(archive.paths['siteAssets'], earl);
 
-  readStream.on('error', function(err) {
-    response.writeHead(404, headers);8
-    response.end(); 
-  });
-// use readFile
-  readStream.on('data', function(){
-    response.writeHead(200, headers);
-  });
-  readStream.pipe(response);
-  console.log("pipe it ", earl);
-
+  fs.readFile(earl, function(err, data){
+    console.log(earl);
+    if(err){ 
+      console.log('err: ', err)
+      response.writeHead(404, headers); 
+    } else if (data){
+      if (contentTypes[path.extname(earl)]){ // headers for javascript && css files
+        response.writeHead(200, {'Content-Type' : contentTypes[path.extname(earl)]});
+        response.write(data);    
+      } else if (path.extname(earl) === ".html" || earl === "/"){
+        response.writeHead(200, headers);
+        response.write(data);
+      } else {
+        response.writeHead(404, helpers.headers);
+        response.end();
+        return;
+      }
+      console.log("here");
+      response.end();
+    };
+  }); 
 
 };
 
-var postAssets = exports.postAssets = function(request, response){
-  // lookup in file
-  console.log(request.url);
+
+//   readStream.on('error', function(err) {
+//     response.writeHead(404, headers);
+//     response.end(); 
+//   });
+// // use readFile ? 
+//   readStream.on('data', function(earl){
+//     // console.log("in data", earl);
+//     response.writeHead(200, headers);
+//   });
+  
+//   readStream.pipe(response); // console.log("pipe it ", earl);
+
+exports.postAssets = postAssets = function(request, response){
+
   if(!archive.isUrlInList(request.data)){ // is it request.data or request.url?
     serveAssets(response, archive.paths['siteAssets'] + '/loading.html');
     response.writeHead(302, headers);
   } else {
 
-  }
+  } 
   return;
 };
