@@ -1,5 +1,7 @@
+var http = require('http');
 var path = require('path');
 var fs = require('fs');
+var mime = require('mime');
 var archive = require('../helpers/archive-helpers');
 
 exports.headers = headers = {
@@ -10,22 +12,39 @@ exports.headers = headers = {
   'Content-Type': "text/html"
 };
 
-exports.serveAssets = function(response, url) { // url = request.data
-  
+exports.serveAssets = function(response, earl) { // url = request.data
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...), css, or anything that doesn't change often.)
-  var readStream = fs.createReadStream('./public' + url);
+  var readStream = fs.createReadStream(earl); 
 
-  readStream.on('open', function(){
-    readStream.pipe(response); // pipe it wheeeeeeerrreee
-  });
   readStream.on('error', function(err) {
-    response.end(err);
+    response.writeHead(404, headers);
+    response.end(); // f u error
   });
+// use readFile
+  readStream.on('data', function(){
+    response.writeHead(200, headers);
+  });
+  readStream.pipe(response);
+  console.log("pipe it");
+
 
 };
 
-/*
+exports.getAssets = function(request, response){
+  // lookup in file
+  // console.log(request.url)
+  // archive.isUrlInList(request.url); // or whatever is the actual website, goddamnit
+  // redirect all POSTs to loading for now
+  response.writeHead(302, {
+    'Location': path.join(archive.paths['siteAssets'], '/loading.html')
+  }, headers);
+
+  response.end();
+  return;
+};
+
+/*5
 The res object in Express is a subclass of Node.js's http.ServerResponse 
 (read the http.js source). You are allowed to call res.setHeader(name, value)
 as often as you want until you call res.writeHead(statusCode).
@@ -42,6 +61,17 @@ become Finished. Then your code threw an error (res.req is null). and
 since the error happened within your actual function(req,res,next) (not within a callback),
 Connect was able to catch it and then tried to send a 500 error page. But since the headers
 were already sent, Node.js's setHeader threw the error that you saw.
+
+var readStream = fs.createReadStream(earl); 
+
+  readStream.on('error', function(err) {
+    response.end(); // f u error
+  });
+// use readFile
+  readStream.on('open', function(){
+    response.writeHead(200, headers);
+  });
+  readStream.pipe(response); // pipe it wheeeeeeerrreee
 */
 
 // fs.createReadStream(filename, {
@@ -53,3 +83,13 @@ were already sent, Node.js's setHeader threw the error that you saw.
 //   'bufferSize': 4 * 1024
 // }), response)
 
+
+  // fs.readFile(earl, function(err, data){
+  //   if(err){
+  //     console.log("YOU DONE FUCKED UP NOW", earl);
+  //     response.end();
+  //     return;
+  //   } else {
+  //     response.writeHead(200, headers);
+  //   }
+  // });

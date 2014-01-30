@@ -7,7 +7,7 @@ var path = require('path');
   code in one place! Feel free to customize it in any way you wish.
 */
 
-// shared between web and workers application
+// shared between web and workers applications
 
 exports.paths = {
   'siteAssets' : path.join(__dirname, '../web/public'),
@@ -32,13 +32,30 @@ exports.initialize = function(pathsObj){
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(){
-
+  fs.readFile(this.paths['list'], 'utf8', function(err, data){
+    if(err) {
+      console.log("THERE WAS A HUGE ERROR READING THE FILE. OMG SORRY NOT SORRY.");
+    } else {
+      console.log(data);
+    }
+  });
 };
 
 exports.isUrlInList = function(url){
-  readListOfUrls();
+  fs.readFile(this.paths['list'], 'utf8', function(err, data){
+    if(err){
+      console.log("THIS SHOULDN'T BE HAPPENING MAN. I DON'T KNOW WHAT'S WRONG.")
+    } else {
+      // pretend that all urls start with www
+      content = data;
+      console.log(content);
+      processFile();
+    }
+  })
 };
-
+function processFile() {
+    console.log(content);
+}
 exports.addUrlToList = function(){
 
 };
