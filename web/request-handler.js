@@ -23,11 +23,17 @@ exports.handleRequest = function (request, response) {
     } else if (request.method === "GET"){
       // write headers for javascript && css files
       if (contentTypes[path.extname(request.url)]){ 
-        response.writeHead(200, contentTypes[path.extname(request.url)]);
-      } else {
-        // console.log("GETTING GETTING GETTING OMG", request.url);
-        helpers.serveAssets(response, archive.paths['siteAssets'] + request.url);
+        console.log(path.extname(request.url))
+        response.writeHead(200, {'Content-Type' : contentTypes[path.extname(request.url)]});
+        response.end();
+      } else if (path.extname(request.url) === ".html" || request.url === "/"){
+        console.log(path.extname(request.url));
+        helpers.serveAssets(response, path.join(archive.paths['siteAssets'], "/index.html"));
         // return;
+      } else {
+        response.writeHead(400, helpers.headers);
+        response.end();
+        return;
       }
     } else {
       response.writeHead(400, helpers.headers);
