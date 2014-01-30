@@ -34,36 +34,47 @@ exports.initialize = function(pathsObj){
 exports.readListOfUrls = function(){
   fs.readFile(this.paths['list'], 'utf8', function(err, data){
     if(err) {
-      console.log("THERE WAS A HUGE ERROR READING THE FILE. OMG SORRY NOT SORRY.");
+      console.log("OMG SORRY NOT SORRY.");
     } else {
       console.log(data);
     }
   });
 };
 
-exports.isUrlInList = function(url){
+exports.isUrlInList = function(earl){
   fs.readFile(this.paths['list'], 'utf8', function(err, data){
     if(err){
       console.log("THIS SHOULDN'T BE HAPPENING MAN. I DON'T KNOW WHAT'S WRONG.")
     } else {
       // pretend that all urls start with www
-      content = data;
-      console.log(content);
-      processFile();
+      var content = data;
+      return processFile(earl, content);
     }
   })
 };
-function processFile() {
-    console.log(content);
-}
-exports.addUrlToList = function(){
+
+exports.addUrlToList = function(earl){
 
 };
 
-exports.isURLArchived = function(){
-
+exports.isURLArchived = function(earl){
+  path.exists(path.join(this.paths['archivedSites'], earl) , function(exists){
+    if(exists){
+      return true;
+    } else {
+      return false;
+    }
+  })
 };
 
 exports.downloadUrls = function(){
 
 };
+///////////////////////
+var processFile = function (earl, content) {
+  if(content.indexOf(earl) > 0){
+    return true;
+  } else {
+    return false;
+  }
+}

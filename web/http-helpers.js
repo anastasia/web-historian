@@ -12,14 +12,14 @@ exports.headers = headers = {
   'Content-Type': "text/html"
 };
 
-exports.serveAssets = function(response, earl) { // url = request.data
+var serveAssets = exports.serveAssets = function(response, earl) { // earl = request.url
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...), css, or anything that doesn't change often.)
   var readStream = fs.createReadStream(earl); 
 
   readStream.on('error', function(err) {
-    response.writeHead(404, headers);
-    response.end(); // f u error
+    response.writeHead(404, headers);8
+    response.end(); 
   });
 // use readFile
   readStream.on('data', function(){
@@ -31,15 +31,14 @@ exports.serveAssets = function(response, earl) { // url = request.data
 
 };
 
-exports.getAssets = function(request, response){
+var postAssets = exports.postAssets = function(request, response){
   // lookup in file
-  // console.log(request.url)
-  // archive.isUrlInList(request.url); // or whatever is the actual website, goddamnit
-  // redirect all POSTs to loading for now
-  response.writeHead(302, {
-    'Location': path.join(archive.paths['siteAssets'], '/loading.html')
-  }, headers); // not riiiiighhhht
+  console.log(request.url);
+  if(!archive.isUrlInList(request.data)){ // is it request.data or request.url?
+    serveAssets(response, archive.paths['siteAssets'] + '/loading.html');
+    response.writeHead(302, headers);
+  } else {
 
-  response.end();
+  }
   return;
 };
