@@ -15,6 +15,7 @@ exports.paths = {
   'list' : path.join(__dirname, '../archives/sites.txt')
 };
 
+
 // Used for stubbing paths for jasmine tests, do not modify
 exports.initialize = function(pathsObj){
   for(var type in pathsObj) {
@@ -25,21 +26,27 @@ exports.initialize = function(pathsObj){
   }
 };
 
+
+
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(){
+
 };
 
-exports.isUrlInList = function(){
+exports.isUrlInList = function(url){
+  readListOfUrls();
 };
 
 exports.addUrlToList = function(){
+
 };
 
 exports.isURLArchived = function(){
+
 };
 
 exports.downloadUrls = function(){
-};
 
+};

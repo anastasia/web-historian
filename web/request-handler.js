@@ -4,28 +4,19 @@ var helpers = require('./http-helpers');
 // require more modules/folders here!
 
 exports.handleRequest = function (request, response) {
-  if(request === "GET"){ 
-    // redirect to loading.html after a user submits a site. 
-    // console.log(__dirname);
-    // callback here
-    // function(err, data){
-    //   if(err){
-    //     err;
-    //   } else {
-        // redirect to website
-        response.end(archive.paths.archivedSites);
-      // }
-    // }
-    helpers.sendResponse(response);
-  }
-  else if(request === "POST"){ 
-    // do later
-    // res.end(archive.paths.list);
-  } 
-  else if(request === "OPTIONS"){ 
-    helpers.sendResponse(response, null);
-  }
-  response.end(); // res.end(archive.paths.list);
+    if (request.method === "GET"){
+      console.log(request)
+      response.writeHead(200, helpers.headers);
+      helpers.serveAssets(response, request.data);
+      return;
+    } 
+    if (request.method === "POST"){ // is post necessary?
+      response.writeHead(200, helpers.headers);
+      helpers.serveAssets(response, request.data);
+    }
+    // if not get, 404
+    response.writeHead(400, helpers.headers);
+    response.end();
 };
 
 
